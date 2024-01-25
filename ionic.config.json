@@ -1,0 +1,7 @@
+{
+  "name": "simple-demo-notifications",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
