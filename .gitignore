@@ -1,6 +1,10 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
+
+# Removing google-services files for iOS and Android. You should provide your own
+ios/App/App/GoogleService-Info.plist
+android/app/google-services.json
 *~
 *.sw[mnpcod]
 .tmp

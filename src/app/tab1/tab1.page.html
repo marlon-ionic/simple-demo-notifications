@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 1
+      Push Notifications
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,9 +9,68 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
+      <ion-title size="large">Push Notifications</ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <section class="ion-padding-horizontal">
+    @if(permissionsAreDenied) {
+      <div class="no-permission">
+        <ion-icon color="danger" name="notifications-off-outline"></ion-icon>
+        <h2>Notifications are Denied</h2>
+        <p>Update the notification settings for this app to continue</p>
+      </div>
+    } @else {
+      @if(token) {
+        <ion-textarea id="copy-token" clearInput="ion-margin" readonly [value]="token" label="Push Token" label-placement="floating" fill="outline"></ion-textarea>
+      }
+    @if(token) {
+    <div class="options">
+      <ion-button color="primary" (click)="copyToken()">
+        <ion-icon slot="start" name="clipboard-outline"></ion-icon>
+        Copy Token
+      </ion-button>
+      <ion-button color="tertiary" (click)="shareToken()">
+        <ion-icon slot="start" name="share-outline"></ion-icon>
+        Share Token
+      </ion-button>
+    </div>
+    }
+    @if(notifications.length > 0) {
+    <div class="options">
+      <ion-button id="confirm-clear-notifications" color="danger">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </div>
+    }
+    <ion-list>
+      @for(item of notifications; track item) {
+      <ion-card>
+        <ion-card-header>
+          @if(item.title) {
+          <ion-card-title>{{item.title}}</ion-card-title>
+          }
+          @if(item.subtitle) {
+          <ion-card-subtitle>{{item.subtitle}}</ion-card-subtitle>
+          }
+          @else if (converNotificationTSToDate(item.data['google.c.a.ts'])) {
+          <ion-card-subtitle>{{converNotificationTSToDate(item.data['google.c.a.ts']) | date:
+            'short'}}</ion-card-subtitle>
+          }
+        </ion-card-header>
+        <ion-card-content>
+          {{item.body}}
+        </ion-card-content>
+      </ion-card>
+      <!-- <ion-item>
+          <ion-label>
+            <h2>{{ notification.title }}</h2>
+            <p>{{ notification.body }}</p>
+          </ion-label>
+        </ion-item> -->
+      }
+    </ion-list>
+    }
+  </section>
+  <ion-action-sheet trigger="confirm-clear-notifications" header="Are you sure you want to clear notifications?"
+    [buttons]="actionSheetButtons"></ion-action-sheet>
 </ion-content>
