@@ -49,8 +49,8 @@ export class Tab1Page implements OnInit{
     try {
       const permissionStatus = await PushNotifications.requestPermissions();
       if(permissionStatus.receive === 'granted'){
-        await PushNotifications.register();
         this.initPushListeners();
+        await PushNotifications.register();
       } else if(permissionStatus.receive === 'denied') {
         this.permissionsAreDenied = true;
       }

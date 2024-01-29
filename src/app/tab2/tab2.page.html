@@ -1,17 +1,93 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+    <ion-segment #segment (ionChange)="segmentChanged($event)" value="all">
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="scheduled">
+        <ion-label>Scheduled</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="delivered">
+        <ion-label>Delivered</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-list>
+    @for(item of notifications; track item.id) {
+    <ion-card>
+      <ion-card-header>
+        @if(item.title) {
+        <ion-card-title>{{item.title}}</ion-card-title>
+        }
+        @if(item.subtitle) {
+        <ion-card-subtitle>{{item.subtitle}}</ion-card-subtitle>
+        }
+        @else if (item.schedule?.at) {
+        <ion-card-subtitle>{{item.schedule?.at | date: 'short'}}</ion-card-subtitle>
+        }
+      </ion-card-header>
+      <ion-card-content>
+        {{item.body}}
+      </ion-card-content>
+    </ion-card>
+    }
+  </ion-list>
+
+  @if(notifications.length > 0) {
+    <ion-fab slot="fixed" vertical="bottom" horizontal="start">
+      <ion-fab-button color="danger" (click)="clearNotifications()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button id="open-modal">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="scheduleRandomNotifications()">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+  <ion-modal trigger="open-modal" (willDismiss)="onWillDismiss($event)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-buttons slot="start">
+            <ion-button (click)="cancel()">Cancel</ion-button>
+          </ion-buttons>
+          <ion-title>Schedule a Local Notification</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="confirm()" [strong]="true">Confirm</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-input [(ngModel)]="scheduleTitle" label="Title" label-placement="stacked"  placeholder="Enter text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-textarea [(ngModel)]="scheduleBody" label="Message" label-placement="stacked"  placeholder="Enter text"></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-datetime-button datetime="datetime"></ion-datetime-button>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime [(ngModel)]="scheduleDateTime" id="datetime" [showDefaultButtons]="true"></ion-datetime>
+    </ng-template>
+  </ion-modal>
 </ion-content>
